@@ -1,11 +1,12 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import PasswordManager from './components/PasswordManager.vue';
+</script>
 
 <template>
-  <h1>You did it!</h1>
+  <h1>Generador de Contraseñas</h1>
+<PasswordManager />
   <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+    </p>
 </template>
 
 <style scoped></style>
