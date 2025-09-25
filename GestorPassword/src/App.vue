@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Gestor de Contraseñas</h1>
+    <h1 style="color:#542379;">Gestor de Contraseñas</h1>
     <PasswordManager />
   </div>
 </template>

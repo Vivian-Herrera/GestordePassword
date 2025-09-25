@@ -1,22 +1,37 @@
 <template>
   <div>
-    <input v-model="masterPassword" placeholder="Contraseña maestra" />
+    <input v-model="masterPassword" placeholder="Ingrese la contraseña maestra => 123456" /> 
     <button @click="loadPasswords">Cargar</button>
 
     <div v-if="error">{{ error }}</div>
-
-    <ul>
-      <li v-for="p in passwords" :key="p.id">
-        <strong>{{ p.name }}</strong> - {{ p.username }} - {{ p.password }} - {{ p.pass2 }}
-        <button @click="deletePassword(p.id)">Eliminar</button>
-      </li>
-    </ul>
-
-    <h3>Agregar nueva</h3>
+     <h3>Agregar nueva</h3>
     <input v-model="newName" placeholder="Nombre" />
     <input v-model="newUser" placeholder="Usuario" />
     <input v-model="newPass" placeholder="Contraseña" />
     <button @click="addPassword">Guardar</button>
+ <table v-if="passwords.length > 0">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Usuario</th>
+          <th>Contraseña</th>
+          <th>Contraseña Encriptada</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="p in passwords" :key="p.id">
+          <td>{{ p.name }}</td>
+          <td>{{ p.username }}</td>
+          <td>{{ p.password }}</td>
+          <td>{{ p.pass2 }}</td>
+          <td><button @click="deletePassword(p.id)">Eliminar</button></td>
+        </tr>
+      </tbody>
+    </table>
+
+   
+   
   </div>
 </template>
 
@@ -74,3 +89,49 @@ export default {
   }
 };
 </script>
+<style scoped>
+input {
+  display: block;
+  margin-bottom: 10px;
+  padding: 5px;
+  width: 300px;
+  font-size: 14px;
+}
+
+button {
+  margin-bottom: 20px;
+  padding: 5px 10px;
+  background-color: #c9e6f3;
+  border: 1px solid rgb(154, 193, 238);
+  color: #04043b;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th,
+td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background-color: #f3f3f3;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+</style>
