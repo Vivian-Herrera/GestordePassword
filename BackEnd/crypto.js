@@ -1,9 +1,7 @@
 const crypto = require('crypto');
-require('dotenv').config();
-
+const KEY = Buffer.from(process.env.ENCRYPTION_KEY, 'utf8');
+const IV = Buffer.from(process.env.IV, 'utf8');
 const ALGORITHM = 'aes-256-cbc';
-const KEY = process.env.ENCRYPTION_KEY;
-const IV = process.env.IV;
 
 function encrypt(text) {
   const cipher = crypto.createCipheriv(ALGORITHM, KEY, IV);
@@ -20,3 +18,4 @@ function decrypt(encrypted) {
 }
 
 module.exports = { encrypt, decrypt };
+

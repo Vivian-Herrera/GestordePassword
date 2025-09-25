@@ -1,86 +1,76 @@
 <template>
   <div>
-    <h2>Gestor de Contraseñas</h2>
-
-    <input v-model="masterPassword" type="password" placeholder="Contraseña maestra" />
+    <input v-model="masterPassword" placeholder="Contraseña maestra" />
     <button @click="loadPasswords">Cargar</button>
 
-    <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
-
-    <form @submit.prevent="addPassword">
-      <input v-model="form.name" placeholder="Nombre" required />
-      <input v-model="form.username" placeholder="Usuario" required />
-      <input v-model="form.password" type="password" placeholder="Contraseña" required />
-      <button>Guardar</button>
-    </form>
+    <div v-if="error">{{ error }}</div>
 
     <ul>
-      <li v-for="item in passwords" :key="item.id">
-        <strong>{{ item.name }}</strong> – {{ item.username }} – {{ item.password }}
-        <button @click="removePassword(item.id)">Eliminar</button>
+      <li v-for="p in passwords" :key="p.id">
+        <strong>{{ p.name }}</strong> - {{ p.username }} - {{ p.password }} - {{ p.pass2 }}
+        <button @click="deletePassword(p.id)">Eliminar</button>
       </li>
     </ul>
+
+    <h3>Agregar nueva</h3>
+    <input v-model="newName" placeholder="Nombre" />
+    <input v-model="newUser" placeholder="Usuario" />
+    <input v-model="newPass" placeholder="Contraseña" />
+    <button @click="addPassword">Guardar</button>
   </div>
 </template>
 
-<script setup lang ="ts">
-import { ref } from 'vue'
-import axios from 'axios'
+<script>
+import axios from 'axios';
 
-const passwords = ref([])
-const form = ref({ name: '', username: '', password: '' })
-const masterPassword = ref('')
-const errorMessage = ref('')
-
-const loadPasswords = async () => {
-  try {
-    errorMessage.value = ''
-    const response = await axios.get('http://localhost:3000/api/passwords', {
-      headers: { masterpassword: masterPassword.value }
-    })
-    passwords.value = response.data
-  } catch (error) {
-    console.error('Error al cargar contraseñas:', error)
-    if (error.response?.status === 401 || error.response?.status === 403) {
-      errorMessage.value = '❌ Contraseña maestra incorrecta.'
-    } else {
-      errorMessage.value = '⚠️ Error al cargar las contraseñas. Verifica el servidor.'
+export default {
+  data() {
+    return {
+      masterPassword: '',
+      passwords: [],
+      newName: '',
+      newUser: '',
+      newPass: '',
+      error: ''
+    };
+  },
+  methods: {
+    async loadPasswords() {
+      try {
+        const res = await axios.get('http://localhost:3000/api/passwords', {
+          headers: { masterpassword: this.masterPassword }
+        });
+        this.passwords = res.data;
+        this.error = '';
+      } catch (err) {
+        this.error = 'Error al cargar contraseñas';
+      }
+    },
+    async addPassword() {
+      try {
+        await axios.post('http://localhost:3000/api/passwords', {
+          name: this.newName,
+          username: this.newUser,
+          password: this.newPass
+        }, {
+          headers: { masterpassword: this.masterPassword }
+        });
+        this.loadPasswords();
+        this.newName = this.newUser = this.newPass = '';
+      } catch {
+        this.error = 'Error al guardar';
+      }
+    },
+    async deletePassword(id) {
+      try {
+        await axios.delete(`http://localhost:3000/api/passwords/${id}`, {
+          headers: { masterpassword: this.masterPassword }
+        });
+        this.loadPasswords();
+      } catch {
+        this.error = 'Error al eliminar';
+      }
     }
   }
-}
-
-const addPassword = async () => {
-  try {
-    errorMessage.value = ''
-    await axios.post('http://localhost:3000/api/passwords', form.value, {
-      headers: { masterpassword: masterPassword.value }
-    })
-    form.value = { name: '', username: '', password: '' }
-    await loadPasswords()
-  } catch (error) {
-    console.error('Error al agregar contraseña:', error)
-    if (error.response?.status === 401 || error.response?.status === 403) {
-      errorMessage.value = '❌ Contraseña maestra incorrecta.'
-    } else {
-      errorMessage.value = '⚠️ No se pudo guardar la contraseña.'
-    }
-  }
-}
-
-const removePassword = async (id) => {
-  try {
-    errorMessage.value = ''
-    await axios.delete(`http://localhost:3000/api/passwords/${id}`, {
-      headers: { masterpassword: masterPassword.value }
-    })
-    await loadPasswords()
-  } catch (error) {
-    console.error('Error al eliminar contraseña:', error)
-    if (error.response?.status === 401 || error.response?.status === 403) {
-      errorMessage.value = '❌ Contraseña maestra incorrecta.'
-    } else {
-      errorMessage.value = '⚠️ No se pudo eliminar la contraseña.'
-    }
-  }
-}
+};
 </script>

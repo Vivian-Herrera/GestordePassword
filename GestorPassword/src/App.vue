@@ -1,12 +1,12 @@
-<script setup lang="ts">
-import PasswordManager from './components/PasswordManager.vue';
-</script>
-
 <template>
-  <h1>Generador de Contraseñas</h1>
-<PasswordManager />
-  <p>
-    </p>
+  <div>
+    <h1>Gestor de Contraseñas</h1>
+    <PasswordManager />
+  </div>
 </template>
 
-<style scoped></style>
+<script>
+import PasswordManager from './components/PasswordManager.vue';
+export default { components: { PasswordManager } };
+</script>
+
